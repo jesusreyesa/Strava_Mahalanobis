@@ -12,14 +12,16 @@ import pandas as pd
 
 FECHA_INICIO = "2025-08-01"
 
-# Actividades con problemas conocidos de calidad: se marcan, no se borran.
-# 16433608626: actividad de Huawei Health el mismo día que "Vals del obrero";
-# puede ser un tramo grabado dos veces.
-REVISAR = {"16433608626": "posible tramo duplicado el mismo dia"}
+# Actividades excluidas por ser grabaciones duplicadas (confirmado por el autor).
+# 16433608626: registro de Huawei Health del 2025-11-03 que cubre solo un tramo
+# de "Vals del obrero" (105 km, id 16342647758), que es la salida completa.
+EXCLUIR = {"16433608626": "tramo duplicado de la salida 16342647758"}
+
+# Actividades que se conservan pero conviene mirar con cuidado.
+REVISAR: dict[str, str] = {}
 
 # Etiquetas asignadas a mano donde las reglas fallarían.
 ETIQUETA_MANUAL = {
-    "16433608626": "otra_media",
     "15558881255": "otra_media",  # ~21 km, ~629 m: distinta de Verjoncito
 }
 
@@ -58,9 +60,10 @@ def etiquetar(fila: pd.Series) -> str:
 
 
 def cargar_crudo(ruta: str) -> pd.DataFrame:
-    """Lee el CSV crudo y filtra por fecha."""
+    """Lee el CSV crudo, filtra por fecha y quita duplicados confirmados."""
     df = pd.read_csv(ruta, dtype={"id": str}, parse_dates=["start_local"])
-    df = df[df["start_local"] >= FECHA_INICIO].copy()
+    df = df[df["start_local"] >= FECHA_INICIO]
+    df = df[~df["id"].isin(EXCLUIR)].copy()
     return df.sort_values("start_local").reset_index(drop=True)
 
 

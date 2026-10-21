@@ -42,3 +42,23 @@ def test_derivar_velocidad_y_paradas():
     assert abs(out["vel_media_kmh"] - 18.0) < 1e-9
     assert abs(out["ratio_paradas"] - 0.2) < 1e-9
     assert abs(out["elev_por_km"] - 15.0) < 1e-9
+
+
+def test_cargar_crudo_excluye_duplicado_confirmado():
+    import os
+    import tempfile
+
+    from stravamaha.data import cargar_crudo
+
+    filas = (
+        "id,start_local,distance_m,moving_s,elapsed_s,elev_gain_m,max_speed_ms,name\n"
+        "16433608626,2025-11-03T08:50:32,36253,5695,5803,679.8,17.3,dup\n"
+        "16342647758,2025-11-03T06:15:18,105338,16588,17701,937.9,17.2,completa\n"
+        "1,2024-01-01T06:00:00,10000,2000,2100,10,9,vieja\n"
+    )
+    with tempfile.TemporaryDirectory() as d:
+        ruta = os.path.join(d, "crudo.csv")
+        with open(ruta, "w") as f:
+            f.write(filas)
+        df = cargar_crudo(ruta)
+    assert list(df["id"]) == ["16342647758"]
