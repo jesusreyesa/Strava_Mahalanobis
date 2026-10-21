@@ -2,7 +2,7 @@
 
 Análisis estadístico de mis salidas de ciclismo de ruta (Bogotá) con datos de Strava, usando la **distancia de Mahalanobis** para estudiar atipicidades multivariadas, y un **recomendador de rutas** construido sobre ese análisis.
 
-> Estado: en construcción. Fase 1 (atipicidades) en desarrollo.
+> Estado: en construcción. Fase 1 (atipicidades): datos listos y EDA hecho (`notebooks/02_eda_supuestos.ipynb`); sigue Mahalanobis clásico vs. robusto.
 
 ## Pregunta
 

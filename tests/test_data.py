@@ -62,3 +62,13 @@ def test_cargar_crudo_excluye_duplicado_confirmado():
             f.write(filas)
         df = cargar_crudo(ruta)
     assert list(df["id"]) == ["16342647758"]
+
+
+def test_marcar_z():
+    import numpy as np
+
+    from stravamaha.plots import marcar_z
+
+    x = pd.Series(np.r_[np.zeros(50), 10.0])
+    marca = marcar_z(x)
+    assert bool(marca.iloc[-1]) and int(marca.sum()) == 1
